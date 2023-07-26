@@ -1,47 +1,96 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref } from "vue";
+
+// 数据
+let queryInput = ref("")
+let tableData = ref([{
+    date: '2016-05-03',
+    name: 'Tom',
+    state: 'California',
+    city: 'Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles',
+    zip: 'CA 90036',
+    tag: 'Home',
+  },
+  {
+    date: '2016-05-02',
+    name: 'Tom',
+    state: 'California',
+    city: 'Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles',
+    zip: 'CA 90036',
+    tag: 'Office',
+  },
+  {
+    date: '2016-05-04',
+    name: 'Tom',
+    state: 'California',
+    city: 'Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles',
+    zip: 'CA 90036',
+    tag: 'Home',
+  },
+  {
+    date: '2016-05-01',
+    name: 'Tom',
+    state: 'California',
+    city: 'Los Angeles',
+    address: 'No. 189, Grove St, Los Angeles',
+    zip: 'CA 90036',
+    tag: 'Office',
+  },])
+
+
+// 方法
+// 注册事件
+const handleRowClick = () =>{
+  console.log('click')
+}
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <!-- 创建根元素，防止变量冲突 -->
+   <div class="table-box">
+     <!-- 标题 -->
+     <div class="title">
+       <h2>最简单的CRUD Demo</h2>
+     </div>
+     <!-- query -->
+     <div class="query-box">
+       <el-input v-model="queryInput" placeholder="请输入姓名搜索" />
+       <el-button type="primary">增加</el-button>
+     </div>
+     <!-- table -->
+     <el-table :data="tableData" style="width: 100%">
+      <el-table-column fixed prop="date" label="Date" width="150" />
+      <el-table-column prop="name" label="Name" width="120" />
+      <el-table-column prop="state" label="State" width="120" />
+      <el-table-column prop="city" label="City" width="120" />
+      <el-table-column prop="address" label="Address" width="600" />
+      <el-table-column prop="zip" label="Zip" width="120" />
+      <el-table-column fixed="right" label="Operations" width="120">
+        <template #default>
+          <el-button link type="primary" size="small" @click="handleRowClick"
+            >Detail</el-button
+          >
+          <el-button link type="primary" size="small">Edit</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+   </div>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
 
-  <main>
-    <TheWelcome />
-  </main>
 </template>
 
+
 <style scoped>
-header {
-  line-height: 1.5;
+.table-box{
+  width: 800px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
