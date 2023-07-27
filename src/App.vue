@@ -6,7 +6,7 @@ let queryInput = $ref("")
 let tableData = $ref([
   {
     id:"1",
-    name: 'Tom',
+    name: 'Tom1',
     email:"163@qq.com",
     phone:"18056789863",
     state: 'California',
@@ -14,7 +14,7 @@ let tableData = $ref([
   },
   {
     id:"2",
-    name: 'Tom',
+    name: 'Tom2',
     email:"163@qq.com",
     phone:"18056789863",
     state: 'California',
@@ -22,7 +22,7 @@ let tableData = $ref([
   },
   {
     id:"3",
-    name: 'Tom',
+    name: 'Tom3',
     email:"163@qq.com",
     phone:"18056789863",
     state: 'California',
@@ -30,7 +30,7 @@ let tableData = $ref([
   },
   {
     id:"4",
-    name: 'Tom',
+    name: 'Tom4',
     email:"163@qq.com",
     phone:"18056789863",
     state: 'California',
@@ -51,19 +51,38 @@ let dialogType = $ref('add')
 
 // 方法
 // 注册事件
-const handleRowDel = ({id}) =>{
-  console.log(id)
+const handleRowDel = ({id}) =>{       //删除一条
+  // console.log(id)
+  //1.通过id获取条目对应的索引值
+  let index = tableData.findIndex(item => item.id === id)
+  // console.log(index)
+  //2.通过索引值进行删除对应条目
+  tableData.splice(index,1)
+
+
 }
-const handleSelectionChange = (val) => {
-  multipleSelection = val
-  console.log(val)
+const handleDelList = () =>{      //删除多条
+  multipleSelection.forEach(id=>{
+    handleRowDel({id})
+  })
+  multipleSelection = []
+}
+const handleSelectionChange = (val) => {    //选中
+  // multipleSelection = val
+  // console.log(val)
+  multipleSelection = []
+
+  val.forEach(item =>{
+    multipleSelection.push(item.id)
+  })
+  // console.log(multipleSelection)
 }
 const handleAdd = ()=>{       //增加
   dialogFormVisible = true
   tableForm.value = {}
   
 }
-const dialogConfirm = () =>{    //确认新增
+const dialogConfirm = () =>{    //确认
   dialogFormVisible = false
   // 1.拿到数据
 
@@ -89,7 +108,10 @@ const dialogConfirm = () =>{    //确认新增
     <!-- query -->
     <div class="query-box">
       <el-input class="query-input" v-model="queryInput" placeholder="请输入姓名搜索" />
-      <el-button type="primary" @click="handleAdd">增加</el-button>
+      <div class="btn-list">
+        <el-button type="primary" @click="handleAdd">增加</el-button>
+        <el-button type="danger" @click="handleDelList" v-if="multipleSelection.length > 0">删除多选</el-button>
+      </div>
     </div>
      <!-- table -->
     <el-table ref="multipleTableRef"
