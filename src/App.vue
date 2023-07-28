@@ -3,6 +3,7 @@ import { ref } from "vue";
 
 // 数据
 let queryInput = $ref("")
+// 表格中的数据
 let tableData = $ref([
   {
     id:"1",
@@ -37,6 +38,7 @@ let tableData = $ref([
     address: 'No. 189, Grove St, Los Angeles',
   },
  ])
+let tableDateCopy = Object.assign(tableData)          //浅拷贝
 let multipleSelection = $ref([])        //选中的列表
 let dialogFormVisible = $ref(false)
 let tableForm = ref({
@@ -51,6 +53,18 @@ let dialogType = $ref('add')
 
 // 方法
 // 注册事件
+const handleQueryName = (val) =>{   //搜索 获取搜索框输入的数据，然后与表格中的姓名信息筛选比较
+  console.log(val)
+  // console.log(queryInput)
+  if (val.length>0) {
+    // 优化 加入大写转小写 —— toLowerCase()
+    tableData = tableData.filter(item => (item.name).toLowerCase().match(val.toLowerCase()))   //刷选符合查询要求的信息
+  }else{
+    tableData = tableDateCopy
+  }
+  
+}
+
 const handleEdit = (row) =>{       //编辑
   dialogFormVisible = true
   dialogType = 'edit'
@@ -123,7 +137,7 @@ const dialogConfirm = () =>{    //确认
     </div>
     <!-- query -->
     <div class="query-box">
-      <el-input class="query-input" v-model="queryInput" placeholder="请输入姓名搜索" />
+      <el-input class="query-input" v-model="queryInput" placeholder="请输入姓名搜索" @input="handleQueryName"/>
       <div class="btn-list">
         <el-button type="primary" @click="handleAdd">增加</el-button>
         <el-button type="danger" @click="handleDelList" v-if="multipleSelection.length > 0">删除多选</el-button>
