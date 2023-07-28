@@ -37,7 +37,7 @@ let tableData = $ref([
     address: 'No. 189, Grove St, Los Angeles',
   },
  ])
-let multipleSelection = $ref([])
+let multipleSelection = $ref([])        //选中的列表
 let dialogFormVisible = $ref(false)
 let tableForm = ref({
   name:"wangergou",
@@ -51,6 +51,13 @@ let dialogType = $ref('add')
 
 // 方法
 // 注册事件
+const handleEdit = (row) =>{       //编辑
+  dialogFormVisible = true
+  dialogType = 'edit'
+  tableForm.value = {...row}    //...扩展运算符 获取条目数对应的信息
+  // console.log(row)
+}
+
 const handleRowDel = ({id}) =>{       //删除一条
   // console.log(id)
   //1.通过id获取条目对应的索引值
@@ -68,9 +75,9 @@ const handleDelList = () =>{      //删除多条
   multipleSelection = []
 }
 const handleSelectionChange = (val) => {    //选中
-  // multipleSelection = val
+  // multipleSelection = val      //选中的列表
   // console.log(val)
-  multipleSelection = []
+  multipleSelection = []    
 
   val.forEach(item =>{
     multipleSelection.push(item.id)
@@ -80,18 +87,27 @@ const handleSelectionChange = (val) => {    //选中
 const handleAdd = ()=>{       //增加
   dialogFormVisible = true
   tableForm.value = {}
-  
+  dialogType = 'add'
 }
 const dialogConfirm = () =>{    //确认
   dialogFormVisible = false
-  // 1.拿到数据
-
-  // 2.添加数据到table
-  tableData.push({
-    id:(tableData.length+1).toString(),
-    ...tableForm.value
-  })
-  console.log(tableData)
+  //判断是新增还是编辑
+  if (dialogType === 'add') {
+    // 1.拿到数据
+    // 2.添加数据到table
+    tableData.push({
+      id:(tableData.length+1).toString(),
+      ...tableForm.value
+    })
+    // console.log(tableData)
+  }else{
+    // 1.获取当前的这条的索引
+    let index = tableData.findIndex(item => item.id === tableForm.value.id)
+    //2.替换当前索引值对应的数据
+    tableData[index] = tableForm.value
+    console.log(index)
+  }
+ 
 
 }
 
@@ -130,7 +146,7 @@ const dialogConfirm = () =>{    //确认
           <el-button link type="primary" size="small" @click="handleRowDel(scoped.row)" style="color:#F56C6C">
             删除
           </el-button>
-          <el-button link type="primary" size="small">编辑</el-button>
+          <el-button link type="primary" size="small" @click="handleEdit(scoped.row)">编辑</el-button>
         </template>
       </el-table-column>
     </el-table>
