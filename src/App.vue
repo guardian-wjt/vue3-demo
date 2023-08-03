@@ -53,9 +53,10 @@ let tableForm = ref({
 })
 let dialogType = $ref('add')
 
+let total = $ref(5)    //默认显示的总页数
+let curPage = $ref(1)   //默认的当前页数
 
-// 方法
-// 注册事件
+// 方法——(注册事件)
 
 // 测试request 请求的方法
 const getTableData = async (cur = 1) =>{
@@ -72,11 +73,17 @@ const getTableData = async (cur = 1) =>{
   // console.log(res); 
 
   tableData = res.list
+  total = res.total
+  curPage = res.pageNum
 
 }
 
-getTableData()
+getTableData(1)
 
+// 请求分页
+const handleChangePage = (val) =>{
+  getTableData(curPage)
+}
 
 
 const handleQueryName = (val) =>{   //搜索 获取搜索框输入的数据，然后与表格中的姓名信息筛选比较
@@ -191,12 +198,13 @@ const dialogConfirm = () =>{    //确认
       </el-table-column>
     </el-table>
     <!-- 带有背景色的分页 -->
-    <el-pagination 
+    <el-pagination
+    :page-size="10" 
     background 
     layout="prev, pager, next"
     style="display:flex;justify-content: center;margin-top:10px;" 
     :total="total"
-    :current-page="curPage"       
+    v-model:current-page="curPage"       
     @current-change="handleChangePage"
      />
     <!-- total 显示的总页数 -->
