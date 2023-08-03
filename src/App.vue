@@ -1,5 +1,8 @@
 <script setup>
+// import { request } from "http";
 import { ref } from "vue";
+import request from "./utils/request.js";
+
 
 // 数据
 let queryInput = $ref("")
@@ -8,7 +11,7 @@ let tableData = $ref([
   {
     id:"1",
     name: 'Tom1',
-    email:"163@qq.com",
+    email:"163@qq.com",               //模拟数据
     phone:"18056789863",
     state: 'California',
     address: 'No. 189, Grove St, Los Angeles',
@@ -53,6 +56,29 @@ let dialogType = $ref('add')
 
 // 方法
 // 注册事件
+
+// 测试request 请求的方法
+const getTableData = async (cur = 1) =>{
+  // http://127.0.0.1:3000/user/list/?pageNum=1&pageSize=10
+  // 第一种请求方式
+  let res = await request.get('/list',{
+    pageNum:cur,      //当前页数
+    pageSize:10       //当前页显示的条目
+  })
+  console.log(res);   //请求返回的数据
+
+  //第二种请求方式      我们做axios封装就是为了使用第二种方式
+  // let res = request.get(`user/list/?pageNum=${cur}&pageSize=10`)
+  // console.log(res); 
+
+  tableData = res.list
+
+}
+
+getTableData()
+
+
+
 const handleQueryName = (val) =>{   //搜索 获取搜索框输入的数据，然后与表格中的姓名信息筛选比较
   console.log(val)
   // console.log(queryInput)
@@ -164,6 +190,19 @@ const dialogConfirm = () =>{    //确认
         </template>
       </el-table-column>
     </el-table>
+    <!-- 带有背景色的分页 -->
+    <el-pagination 
+    background 
+    layout="prev, pager, next"
+    style="display:flex;justify-content: center;margin-top:10px;" 
+    :total="total"
+    :current-page="curPage"       
+    @current-change="handleChangePage"
+     />
+    <!-- total 显示的总页数 -->
+    <!-- curPage  当前页数 -->
+    <!-- @current-change 当前页数改变时触发事件 -->
+
     <!-- dialog -->
     <el-dialog v-model="dialogFormVisible" :title="dialogType === 'add' ? '新增':'编辑'">
     <el-form :model="tableForm">
