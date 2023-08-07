@@ -168,10 +168,22 @@ const dialogConfirm = async () =>{    //确认
     
   }else{
     // 1.获取当前的这条的索引
-    let index = tableData.findIndex(item => item.id === tableForm.value.id)
-    //2.替换当前索引值对应的数据
-    tableData[index] = tableForm.value
-    console.log(index)
+    // let index = tableData.findIndex(item => item.id === tableForm.value.id)
+    // //2.替换当前索引值对应的数据
+    // tableData[index] = tableForm.value
+    console.log(tableForm.value)
+
+    // 修改内容
+    await request.put(`/update/${tableForm.value.ID}`,{
+      ...tableForm.value
+    })
+
+
+    //刷选请求数据
+    await getTableData(curPage)
+
+
+
   }
  
 
