@@ -59,7 +59,7 @@ let curPage = $ref(1)   //默认的当前页数
 // 方法——(注册事件)
 
 // 测试request 请求的方法
-const getTableData = async (cur = 1) =>{
+const getTableData = async (cur = 1) =>{    //查询
   // http://127.0.0.1:3000/user/list/?pageNum=1&pageSize=10
   // 第一种请求方式
   let res = await request.get('/list',{
@@ -78,10 +78,10 @@ const getTableData = async (cur = 1) =>{
 
 }
 
-getTableData(1)
+getTableData(curPage)
 
 // 请求分页
-const handleChangePage = (val) =>{
+const handleChangePage = (val) =>{    
   getTableData(curPage)
 }
 
@@ -105,48 +105,67 @@ const handleEdit = (row) =>{       //编辑
   // console.log(row)
 }
 
-const handleRowDel = ({id}) =>{       //删除一条
+const handleRowDel = async ({ID}) =>{       //删除一条
   // console.log(id)
   //1.通过id获取条目对应的索引值
-  let index = tableData.findIndex(item => item.id === id)
-  // console.log(index)
-  //2.通过索引值进行删除对应条目
-  tableData.splice(index,1)
+  // let index = tableData.findIndex(item => item.id === id)
+  // // console.log(index)
+  // //2.通过索引值进行删除对应条目
+  // tableData.splice(index,1)
 
+  await request.delete(`/delete/${ID}`)
+  //刷选数据
+  await getTableData(curPage)
 
 }
 const handleDelList = () =>{      //删除多条
-  multipleSelection.forEach(id=>{
-    handleRowDel({id})
+  multipleSelection.forEach(ID=>{
+    handleRowDel({ID})
   })
   multipleSelection = []
 }
+
 const handleSelectionChange = (val) => {    //选中
   // multipleSelection = val      //选中的列表
   // console.log(val)
   multipleSelection = []    
 
   val.forEach(item =>{
-    multipleSelection.push(item.id)
+    multipleSelection.push(item.ID)
   })
   // console.log(multipleSelection)
 }
+
 const handleAdd = ()=>{       //增加
   dialogFormVisible = true
   tableForm.value = {}
   dialogType = 'add'
 }
-const dialogConfirm = () =>{    //确认
+
+const dialogConfirm = async () =>{    //确认
   dialogFormVisible = false
   //判断是新增还是编辑
   if (dialogType === 'add') {
     // 1.拿到数据
     // 2.添加数据到table
-    tableData.push({
-      id:(tableData.length+1).toString(),
-      ...tableForm.value
-    })
+
+    // tableData.push({     //前端增加
+    //   id:(tableData.length+1).toString(),
+    //   ...tableForm.value
+    // })
     // console.log(tableData)
+
+    // 添加数据
+    await request.post("/add",{
+       ...tableForm.value
+    })
+
+    console.log(curPage)
+    
+    //刷选数据
+    await getTableData(Math.ceil(total/10))     
+   
+    
   }else{
     // 1.获取当前的这条的索引
     let index = tableData.findIndex(item => item.id === tableForm.value.id)
