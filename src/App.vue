@@ -86,15 +86,22 @@ const handleChangePage = (val) =>{
 }
 
 
-const handleQueryName = (val) =>{   //搜索 获取搜索框输入的数据，然后与表格中的姓名信息筛选比较
+const handleQueryName = async(val) =>{   //搜索 获取搜索框输入的数据，然后与表格中的姓名信息筛选比较
   console.log(val)
   // console.log(queryInput)
-  if (val.length>0) {
-    // 优化 加入大写转小写 —— toLowerCase()
-    tableData = tableData.filter(item => (item.name).toLowerCase().match(val.toLowerCase()))   //刷选符合查询要求的信息
+  // if (val.length>0) {
+  //   // 优化 加入大写转小写 —— toLowerCase()
+  //   tableData = tableData.filter(item => (item.name).toLowerCase().match(val.toLowerCase()))   //刷选符合查询要求的信息
+  // }else{
+  //   tableData = tableDateCopy
+  // }
+
+  if (val.length > 0) {
+    tableData = await request.get(`/list/${val}`)
   }else{
-    tableData = tableDateCopy
+    await getTableData(curPage)
   }
+  
   
 }
 
@@ -179,7 +186,7 @@ const dialogConfirm = async () =>{    //确认
     })
 
 
-    //刷选请求数据
+    //刷选数据
     await getTableData(curPage)
 
 
@@ -201,7 +208,7 @@ const dialogConfirm = async () =>{    //确认
     </div>
     <!-- query -->
     <div class="query-box">
-      <el-input class="query-input" v-model="queryInput" placeholder="请输入姓名搜索" @input="handleQueryName"/>
+      <el-input class="query-input" v-model="queryInput" placeholder="请输入姓名搜索" @change="handleQueryName"/>
       <div class="btn-list">
         <el-button type="primary" @click="handleAdd">增加</el-button>
         <el-button type="danger" @click="handleDelList" v-if="multipleSelection.length > 0">删除多选</el-button>
